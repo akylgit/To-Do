@@ -1,6 +1,6 @@
 {
   "name": "todo",
-  "homepage": "https://github.com/akylgit/To-Do/blob/main/todo/",
+  "homepage": "https://github.com/akylgit/To-Do",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
