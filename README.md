@@ -16,6 +16,7 @@ Whenever there is a push to the `main` branch, the workflow triggers a build job
 
 ### Prerequisites
 
+
 - Node.js and npm should be installed.
 
 ### Live
