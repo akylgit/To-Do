@@ -23,7 +23,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 sshagent(['credential-id']) {
-                    sh """
+                    bat """
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app
                     ssh ${EC2_USER}@${EC2_IP} << EOF
                     sudo rm -rf /var/www/html/*
