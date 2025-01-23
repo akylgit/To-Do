@@ -4,7 +4,7 @@ pipeline {
         nodejs "NodeJS" // Name configured in Global Tool Configuration
     }
     environment {
-        EC2_IP = "98.81.133.13"
+        EC2_IP = "3.85.55.17"
         EC2_USER = "ubuntu"
     }
     stages {
@@ -26,11 +26,11 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sshagent(['id_rsa']) {
+                sshagent(['devops-key']) {
                     sh """
                     echo "Starting deployment to ${EC2_IP}..."
-                    
-                    # Transfer the build to the EC2 instances
+
+                    # Transfer the build to the EC2 instance
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app || exit 1
 
                     # SSH into the EC2 instance and configure Nginx
@@ -38,7 +38,7 @@ pipeline {
                     echo "Updating and installing Nginx..."
                     sudo apt-get update -y || exit 1
                     sudo apt-get install -y nginx || exit 1
-                    
+
                     echo "Deploying React app..."
                     sudo rm -rf /var/www/html/*
                     sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/ || exit 1
@@ -52,3 +52,4 @@ pipeline {
         }
     }
 }
+
