@@ -28,8 +28,15 @@ pipeline {
                     sh """
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app
                     ssh ${EC2_USER}@${EC2_IP} << EOF
+                    # Update package lists and install Nginx
+                    sudo apt-get update -y
+                    sudo apt-get install -y nginx
+
+                    # Clean the Nginx web root and deploy the React app
                     sudo rm -rf /var/www/html/*
                     sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/
+
+                    # Restart Nginx to apply changes
                     sudo systemctl restart nginx
                     EOF
                     """
