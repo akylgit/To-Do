@@ -29,7 +29,7 @@ pipeline {
                 sshagent(['credential-id']) {
                     sh """
                     echo "Starting deployment to ${EC2_IP}..."
-
+                    ssh-keyscan -H ${EC2_IP} >> ~/.ssh/known_hosts
                     # Transfer the build to the EC2 instances
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app || exit 1
 
