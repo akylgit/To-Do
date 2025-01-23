@@ -26,7 +26,7 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sshagent(['credential-id']) {
+                sshagent(['devops-key']) {
                     sh """
                     echo "Starting deployment to ${EC2_IP}..."
                     
