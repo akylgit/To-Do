@@ -1,36 +1,27 @@
 pipeline {
     agent any
     tools {
-        nodejs "NodeJS" // Name configured in Global Tool Configuration
-    }
-    environment {
-        EC2_IP = "98.80.225.1"
-        EC2_USER = "ubuntu"
+        nodejs "NodeJS"  // This is configured in Global Tool Configuration
     }
     stages {
         stage("Checkout") {
             steps {
-                git branch: "main", url: "https://github.com/akylgit/To-Do.git"
+                git branch: 'main', url: 'https://github.com/akylgit/To-Do.git'
             }
         }
-        stage("Build") {
+        stage("Install and Build") {
             steps {
-                bat '''
-                cd todo
-                npm install
-                npm run build
-                '''
+                withEnv(["NODE_HOME=${tool 'NodeJS'}", "PATH+NODE=${tool 'NodeJS'}/bin"]) {
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
             }
         }
         stage("Deploy") {
             steps {
-                sshagent(['credential-id']) {
-                    bat """
-                    "C:\\Program Files\\Git\\bin\\bash.exe" -c \"
-                    scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app &&
-                    ssh ${EC2_USER}@${EC2_IP} 'sudo rm -rf /var/www/html/* && sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/ && sudo systemctl restart nginx'
-                    \"
-                    """
+                withEnv(["NODE_HOME=${tool 'NodeJS'}", "PATH+NODE=${tool 'NodeJS'}/bin"]) {
+                    // Deployment commands that use NodeJS
+                    bat 'npm run deploy'
                 }
             }
         }
