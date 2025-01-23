@@ -30,7 +30,7 @@ pipeline {
                     sh """
                     echo "Starting deployment to ${EC2_IP}..."
 
-                    # Transfer the build to the EC2 instance
+                    # Transfer the build to the EC2 instances
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app || exit 1
 
                     # SSH into the EC2 instance and configure Nginx
