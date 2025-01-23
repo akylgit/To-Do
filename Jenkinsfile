@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs "NodeJS" // Name configured in Global Tool Configuration
+    }
     environment {
         EC2_IP = "98.80.225.1"
         EC2_USER = "ubuntu"
