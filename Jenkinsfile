@@ -1,20 +1,21 @@
-pipline {
+pipeline {
     agent any
-    enviroment {
+    environment {
         EC2_IP = "98.80.225.1"
         EC2_USER = "ubuntu"
     }
     stages {
         stage("Checkout") {
             steps {
-                git branch: "main", "https://github.com/akylgit/To-Do.git"
+                git branch: "main", url: "https://github.com/akylgit/To-Do.git"
             }
         }
         stage("Build") {
             steps {
                 cd todo
-                npm install
-                npm run build
+                sh 'npm install'
+                sh 'npm run build'
+                
             }
         }
         stage("Deploy") {
@@ -28,7 +29,8 @@ pipline {
                     sudo systemctl restart nginx
                     EOF
                     """
+                }
             }
         }
-    }   
+    }
 }
