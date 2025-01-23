@@ -26,12 +26,10 @@ pipeline {
             steps {
                 sshagent(['credential-id']) {
                     bat """
-                    scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app
-                    ssh ${EC2_USER}@${EC2_IP} << EOF
-                    sudo rm -rf /var/www/html/*
-                    sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/
-                    sudo systemctl restart nginx
-                    EOF
+                    "C:\\Program Files\\Git\\bin\\bash.exe" -c \"
+                    scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app &&
+                    ssh ${EC2_USER}@${EC2_IP} 'sudo rm -rf /var/www/html/* && sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/ && sudo systemctl restart nginx'
+                    \"
                     """
                 }
             }
