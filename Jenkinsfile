@@ -26,27 +26,23 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sshagent(['3.85.55.17']) {
-                    sh """
-                    echo "Starting deployment to ${EC2_IP}..."
+                sshagent(['credential-id']) {
+                    sh '''
+                    # Ensure target directories exist on EC2
+                    ssh ${EC2_USER}@${EC2_IP} "mkdir -p /home/ubuntu/react-app"
 
+                    # Copy the deploy.sh file to EC2
+                    scp deploy.sh ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/deploy.sh
+
+                    
                     # Transfer the build to the EC2 instances
                     scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app || exit 1
 
-                    # SSH into the EC2 instance and configure Nginx
-                    ssh ${EC2_USER}@${EC2_IP} << EOF
-                    echo "Updating and installing Nginx..."
-                    sudo apt-get update -y || exit 1
-                    sudo apt-get install -y nginx || exit 1
+                     # Run the deploy.sh script on EC2
+                    ssh ${EC2_USER}@${EC2_IP} "bash /home/${EC2_USER}/deploy.sh"
+                            '''
 
-                    echo "Deploying React app..."
-                    sudo rm -rf /var/www/html/*
-                    sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/ || exit 1
-                    sudo systemctl restart nginx || exit 1
-
-                    echo "Deployment successful."
-                    EOF
-                    """
+                
                 }
             }
         }
