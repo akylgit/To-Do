@@ -15,7 +15,7 @@ pipeline {
         }
         stage("Build") {
             steps {
-                bat '''
+                sh '''
                 cd todo
                 npm install
                 npm run build
