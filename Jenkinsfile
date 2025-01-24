@@ -4,7 +4,7 @@ pipeline {
         nodejs "NodeJS" // Name configured in Global Tool Configuration
     }
     environment {
-        EC2_IP = "54.81.31.36"
+        EC2_IP = "54.162.192.251"
         EC2_USER = "ubuntu"
     }
     stages {
