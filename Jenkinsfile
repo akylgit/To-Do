@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage("Checkout") {
             steps {
-                git branch: "main", url: "https://github.com/akylgit/To-Do.git"
+                sh 'git clone -b main https://github.com/akylgit/To-Do.git'
             }
         }
         stage("Build") {
@@ -26,27 +26,15 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sshagent(['aws-credentials-akyl']) {
-                    sh """
-                    echo "Starting deployment to ${EC2_IP}..."
-                    ssh-keyscan -H ${EC2_IP} >> ~/.ssh/known_hosts
-                    # Transfer the build to the EC2 instances
-                    scp -r todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app || exit 1
-
-                    # SSH into the EC2 instance and configure Nginx
-                    ssh ${EC2_USER}@${EC2_IP} << EOF
-                    echo "Updating and installing Nginx..."
-                    sudo apt-get update -y || exit 1
-                    sudo apt-get install -y nginx || exit 1
-
-                    echo "Deploying React app..."
-                    sudo rm -rf /var/www/html/*
-                    sudo cp -r /home/${EC2_USER}/react-app/* /var/www/html/ || exit 1
-                    sudo systemctl restart nginx || exit 1
-
-                    echo "Deployment successful."
-                    EOF
-                    """
+                sshagent(['credential-id']) {
+                    script {
+                        sh """
+                        ssh ${EC2_USER}@${EC2_IP} 'mdkir -p /home/ubuntu/react-app"
+                        scp deploy.sh ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/deploy.sh
+                        scp -r todo/build ${EC2_USER}@${EC2_IP}/home/${EC2_USER}/react-app
+                        ssh ${EC2_USER}@${EC2_IP} 'bash /home/${EC2_USER}/deploy.sh'
+                        """
+                    }
                 }
             }
         }
