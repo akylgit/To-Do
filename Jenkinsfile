@@ -29,11 +29,17 @@ pipeline {
                 sshagent(['credential-id']) {
                     script {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 
-                        mkdir -p /home/ubuntu/react-app
-                        scp deploy.sh ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/deploy.sh
-                        scp -r todo/build ${EC2_USER}@${EC2_IP}/home/${EC2_USER}/react-app
-                        ssh ${EC2_USER}@${EC2_IP} 'bash /home/${EC2_USER}/deploy.sh'
+                        # Disable host key checking to avoid manual prompts
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 'mkdir -p /home/${EC2_USER}/react-app'
+
+                        # Copy the deployment script to the remote server
+                        scp -o StrictHostKeyChecking=no deploy.sh ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/deploy.sh
+
+                        # Copy the React build directory to the remote server
+                        scp -r -o StrictHostKeyChecking=no todo/build ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/react-app
+
+                        # Execute the deployment script on the remote server
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 'bash /home/${EC2_USER}/deploy.sh'
                         """
                     }
                 }
