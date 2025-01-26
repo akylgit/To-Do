@@ -4,7 +4,7 @@ pipeline {
         nodejs "NodeJS" // Name configured in Global Tool Configuration
     }
     environment {
-        EC2_IP = "54.162.192.251"
+        EC2_IP = "54.158.217.219"
         EC2_USER = "ubuntu"
     }
     stages {
@@ -26,7 +26,7 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sshagent(['credential-id']) {
+                sshagent(['aws-credentials-akyl']) {
                     sh """
                     echo "Starting deployment to ${EC2_IP}..."
                     ssh-keyscan -H ${EC2_IP} >> ~/.ssh/known_hosts
