@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage("Checkout") {
             steps {
-                sh 'git clone -b main https://github.com/akylgit/To-Do.git'
+                 git branch: "main", url: "https://github.com/akylgit/To-Do.git"
             }
         }
         stage("Build") {
